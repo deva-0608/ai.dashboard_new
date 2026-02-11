@@ -1,0 +1,163 @@
+/* =========================================================
+   AI DASHBOARD — FULLY NAMESPACED
+   Scope: .ai-dashboard-root
+========================================================= */
+
+/* ---------- Base reset (scoped) ---------- */
+.ai-dashboard-root,
+.ai-dashboard-root * {
+  box-sizing: border-box;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ---------- Page container ---------- */
+.ai-dashboard-root {
+  height: 100vh;
+  background: #f5f5f5;
+  color: #333;
+}
+
+/* =========================================================
+   MAIN LAYOUT
+========================================================= */
+
+.ai-dashboard-root .dashboard {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  height: 100%;
+}
+
+/* =========================================================
+   LEFT: DASHBOARD AREA
+========================================================= */
+
+.ai-dashboard-root .dashboard-area {
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* =========================================================
+   KPI GRID
+========================================================= */
+
+.ai-dashboard-root .kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ai-dashboard-root .kpi-card {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.ai-dashboard-root .kpi-name {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.ai-dashboard-root .kpi-value {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1e88e5;
+}
+
+/* =========================================================
+   CHART GRID (DYNAMIC)
+========================================================= */
+
+.ai-dashboard-root .charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 16px;
+}
+
+.ai-dashboard-root .chart-card {
+  height: 360px;
+  background: #ffffff;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* =========================================================
+   RIGHT: CHAT AREA
+========================================================= */
+
+.ai-dashboard-root .chat-area {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-left: 1px solid #ddd;
+}
+
+/* Header */
+.ai-dashboard-root .chat-header {
+  padding: 12px;
+  font-weight: 600;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Messages */
+.ai-dashboard-root .chat-messages {
+  flex: 1;
+  padding: 12px;
+  background: #fafafa;
+  overflow-y: auto;
+}
+
+/* Chat bubbles */
+.ai-dashboard-root .chat-messages .left,
+.ai-dashboard-root .chat-messages .right {
+  max-width: 75%;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.ai-dashboard-root .chat-messages .left {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.ai-dashboard-root .chat-messages .right {
+  background: #1e88e5;
+  color: #ffffff;
+  margin-left: auto;
+}
+
+/* Input */
+.ai-dashboard-root .chat-input-area {
+  padding: 12px;
+  border-top: 1px solid #ddd;
+}
+
+.ai-dashboard-root .chat-input-area input {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 13px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+  .ai-dashboard-root .dashboard {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-dashboard-root .chat-area {
+    height: 40vh;
+    border-left: none;
+    border-top: 1px solid #ddd;
+  }
+}

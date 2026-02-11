@@ -1,0 +1,205 @@
+/* =========================================================
+   DESIGN SYSTEM — AI DASHBOARD (YELLOW VIBRANT)
+========================================================= */
+
+:root {
+  /* Background */
+  --bg-primary: #f8f9fa;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #fffdf5;
+  --bg-input: #f3f4f6;
+
+  /* Accent — warm yellow / gold */
+  --accent: #f59e0b;
+  --accent-light: #d97706;
+  --accent-soft: #fef3c7;
+  --accent-glow: rgba(245, 158, 11, 0.25);
+  --accent-gradient: linear-gradient(135deg, #f59e0b, #fbbf24);
+
+  /* Status */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
+
+  /* Text */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+
+  /* Borders */
+  --border: #e5e7eb;
+  --border-light: #d1d5db;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.08);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+
+  /* Radius */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  --transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* =========================================================
+   RESET
+========================================================= */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent-light);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* =========================================================
+   REACT GRID LAYOUT — CLEAN OVERRIDES
+========================================================= */
+
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+}
+
+.react-grid-item.resizing {
+  z-index: 1;
+  will-change: width, height;
+  opacity: 0.92;
+}
+
+.react-grid-item.react-draggable-dragging {
+  z-index: 100;
+  will-change: transform;
+  opacity: 0.92;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(245, 158, 11, 0.2);
+  border-radius: 12px;
+}
+
+.react-grid-item > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  bottom: 0;
+  right: 0;
+  cursor: se-resize;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: '';
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid #d1d5db;
+  border-bottom: 2px solid #d1d5db;
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.react-grid-item:hover > .react-resizable-handle::after {
+  opacity: 1;
+}
+
+/* Placeholder while dragging */
+.react-grid-item.react-grid-placeholder {
+  background: rgba(245, 158, 11, 0.08) !important;
+  border: 2px dashed rgba(245, 158, 11, 0.3) !important;
+  border-radius: 12px !important;
+  opacity: 1 !important;
+}
+
+/* =========================================================
+   UTILITY CLASSES
+========================================================= */
+
+.fade-in {
+  animation: fadeIn 0.25s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.loading-pulse {
+  animation: pulse 1.5s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 50%, #f3f4f6 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease infinite;
+  border-radius: 12px;
+}

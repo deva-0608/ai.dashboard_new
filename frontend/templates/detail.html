@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Report List</title>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+</head>
+<body>
+
+<div class="reports-container">
+
+  <h2 class="page-title">Available Reports</h2>
+
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>Report ID</th>
+        <th>Project Name</th>
+      </tr>
+    </thead>
+    <tbody id="report-table-body">
+      <!-- rows injected here -->
+    </tbody>
+  </table>
+
+</div>
+
+<script>
+/* ================================
+   CONFIG
+================================ */
+const API_BASE = "http://localhost:8000";
+
+/* ================================
+   READ QUERY PARAM
+================================ */
+const params = new URLSearchParams(window.location.search);
+const reportType = params.get("report_type"); // custom-report / project-report / document-report
+
+if (!reportType) {
+  alert("Missing report_type in URL");
+}
+
+/* ================================
+   FETCH REPORT LIST
+================================ */
+fetch(`${API_BASE}/reports/design/${reportType}-list`)
+  .then(res => {
+    if (!res.ok) {
+      throw new Error("Failed to fetch report list");
+    }
+    return res.json();
+  })
+  .then(data => {
+    const tbody = document.getElementById("report-table-body");
+    tbody.innerHTML = "";
+
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="2" style="text-align:center;">
+            No reports found
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    data.forEach(item => {
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td class="link">
+          <a href="custom-detail.html?report_type=${reportType}&report_id=${item.report_id}">
+            ${item.report_id}
+          </a>
+        </td>
+        <td>${item.project_name}</td>
+      `;
+
+      tbody.appendChild(tr);
+    });
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Error loading reports. Check backend.");
+  });
+</script>
+
+</body>
+</html>
