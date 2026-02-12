@@ -25,6 +25,11 @@ langchain-openai
 python-dotenv
 
 # ------------------------
+# Forecasting
+# ------------------------
+statsmodels
+
+# ------------------------
 # Optional (recommended)
 # ------------------------
 typing-extensions

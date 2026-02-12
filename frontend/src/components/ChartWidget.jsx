@@ -24,6 +24,7 @@ const TYPE_COLORS = {
   bar: '#6366f1', line: '#06b6d4', pie: '#f43f5e', scatter: '#10b981',
   area: '#8b5cf6', radar: '#f97316', heatmap: '#ec4899', gauge: '#14b8a6',
   funnel: '#e11d48', treemap: '#0ea5e9', boxplot: '#8b5cf6', histogram: '#f97316',
+  forecast: '#f43f5e',
 }
 
 export default function ChartWidget({ chart }) {

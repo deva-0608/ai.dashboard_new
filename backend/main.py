@@ -146,6 +146,19 @@ async def chat_and_generate_dashboard(
     df, project_name = load_excel_dataframe(report_type, report_id, file_name)
 
     # --------------------------------------------------
+    # Re-apply any custom columns from session
+    # --------------------------------------------------
+    from custom_columns import apply_formula, parse_formula_string
+    session = SessionStore.get_or_create(session_id)
+    custom_cols = session.memory.get("custom_columns", {})
+    for cname, cformula in custom_cols.items():
+        _, expr = parse_formula_string(cformula)
+        if expr:
+            df, err = apply_formula(df, cname, expr)
+            if not err:
+                print(f"[Main] Re-applied custom column: {cname}")
+
+    # --------------------------------------------------
     # Build INITIAL state
     # --------------------------------------------------
     from utils.schema_utils import infer_schema
@@ -222,7 +235,99 @@ async def chat_and_generate_dashboard(
 
 
 # --------------------------------------------------
-# 7. SESSION INFO
+# 7. CUSTOM COLUMNS
+# --------------------------------------------------
+@app.post("/reports/design/{report_type}/detail/{report_id}/custom-column")
+async def add_custom_column(
+    report_type: str,
+    report_id: str,
+    payload: Dict[str, Any]
+):
+    """
+    Apply a user-defined formula to create a new column.
+    Payload: { "formula": "Revenue = Price * Quantity", "session_id": "...", "file_name": "..." }
+    Returns: { "success": true, "column_name": "Revenue", "sample_values": [...], "columns": [...] }
+    """
+    from custom_columns import parse_formula_string, validate_formula, apply_formula, get_column_suggestions
+
+    validate_report_type(report_type)
+
+    formula_str = payload.get("formula", "")
+    session_id = payload.get("session_id", "default")
+    file_name = payload.get("file_name", None)
+
+    if not formula_str:
+        raise HTTPException(status_code=400, detail="Formula is required")
+
+    # Parse "name = expression"
+    col_name, expression = parse_formula_string(formula_str)
+    if not col_name or not expression:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid formula format. Use: column_name = expression (e.g., Revenue = Price * Quantity)"
+        )
+
+    # Load data
+    df, project_name = load_excel_dataframe(report_type, report_id, file_name)
+
+    # Validate
+    is_valid, error = validate_formula(expression, list(df.columns))
+    if not is_valid:
+        raise HTTPException(status_code=400, detail=error)
+
+    # Apply
+    df, error = apply_formula(df, col_name, expression)
+    if error:
+        raise HTTPException(status_code=400, detail=error)
+
+    # Store in session for reuse
+    session = SessionStore.get_or_create(session_id)
+    if "custom_columns" not in session.memory:
+        session.memory["custom_columns"] = {}
+    session.memory["custom_columns"][col_name] = formula_str
+
+    # Return preview
+    sample = df[col_name].dropna().head(5).tolist()
+    return {
+        "success": True,
+        "column_name": col_name,
+        "formula": formula_str,
+        "sample_values": [round(float(v), 2) if isinstance(v, (int, float)) else v for v in sample],
+        "total_rows": int(df[col_name].notna().sum()),
+        "columns": list(df.columns),
+    }
+
+
+@app.get("/reports/design/{report_type}/detail/{report_id}/formula-suggestions")
+async def get_formula_suggestions(report_type: str, report_id: str, file_name: str = None):
+    """Get smart formula suggestions based on the data schema."""
+    from custom_columns import get_column_suggestions, _detect_date_columns
+
+    validate_report_type(report_type)
+    df, _ = load_excel_dataframe(report_type, report_id, file_name)
+
+    suggestions = get_column_suggestions(df)
+
+    # Detect date columns properly (including string dates)
+    date_cols = _detect_date_columns(df)
+    native_datetime = df.select_dtypes(include=["datetime64"]).columns.tolist()
+    all_dates = list(dict.fromkeys(native_datetime + date_cols))  # dedupe, preserve order
+
+    # Categorical = object columns that are NOT dates
+    date_set = set(all_dates)
+    categorical = [c for c in df.select_dtypes(include=["object", "category"]).columns
+                   if c not in date_set]
+
+    columns = {
+        "numeric": df.select_dtypes(include=["number"]).columns.tolist(),
+        "datetime": all_dates,
+        "categorical": categorical,
+    }
+    return {"suggestions": suggestions, "columns": columns}
+
+
+# --------------------------------------------------
+# 8. SESSION INFO
 # --------------------------------------------------
 @app.get("/session/{session_id}")
 def get_session_info(session_id: str):

@@ -8,6 +8,7 @@ import ChartWidget from '../components/ChartWidget'
 import KPICard from '../components/KPICard'
 import ChatPanel from '../components/ChatPanel'
 import { FiArrowLeft, FiCpu, FiGrid, FiZap, FiBarChart2, FiMessageCircle } from 'react-icons/fi'
+import FormulaBuilder from '../components/FormulaBuilder'
 
 const ResponsiveGridLayout = WidthProvider(Responsive)
 
@@ -58,6 +59,8 @@ export default function AIDashboard() {
           w = 6; h = 6; break
         case 'histogram':
           w = 6; h = 5; break
+        case 'forecast':
+          w = 8; h = 6; break
         case 'treemap':
           w = 6; h = 5; break
         case 'scatter':
@@ -164,6 +167,18 @@ export default function AIDashboard() {
         )}
 
         <div style={styles.headerRight}>
+          <FormulaBuilder
+            reportType={reportType}
+            reportId={reportId}
+            sessionId={sessionId}
+            fileName={activeFile}
+            onColumnAdded={(result) => {
+              setMessages((prev) => [...prev, {
+                role: 'assistant',
+                content: `Custom column "${result.column_name}" created with ${result.total_rows} values. It will be available in your next analysis.`,
+              }])
+            }}
+          />
           <div style={styles.badge}>
             <FiGrid size={12} />
             <span>Drag to rearrange</span>
@@ -318,7 +333,7 @@ const styles = {
     cursor: 'pointer', transition: 'all 0.15s',
   },
   fileTabActive: { background: 'var(--accent)', color: '#fff', borderColor: 'var(--accent)' },
-  headerRight: { marginLeft: 'auto' },
+  headerRight: { marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 },
   badge: {
     display: 'flex', alignItems: 'center', gap: 5,
     padding: '6px 12px', borderRadius: 8,

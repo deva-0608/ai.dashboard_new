@@ -69,7 +69,12 @@ def _build_suggest_context(state: DashboardState) -> dict:
         enrichment_msgs = a2a_bus.get_all_of_type("enrichment_info")
         if enrichment_msgs:
             payload = enrichment_msgs[-1].get("payload", {})
-            derived_cols = payload.get("derived_columns", [])
+            raw_derived = payload.get("derived_columns", [])
+            # derived_columns is List[Dict] with {"column": ..., "formula": ...}
+            derived_cols = [
+                d.get("column", "") if isinstance(d, dict) else str(d)
+                for d in raw_derived
+            ]
             hue_cols = payload.get("suggested_hue_columns", [])
             # Merge enrichment numeric/categorical
             numeric_cols = list(set(numeric_cols + payload.get("key_numeric_columns", [])))

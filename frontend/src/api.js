@@ -46,3 +46,29 @@ export async function fetchHealth() {
   if (!res.ok) throw new Error('Backend health check failed')
   return res.json()
 }
+
+export async function addCustomColumn(reportType, reportId, formula, sessionId = null, fileName = null) {
+  const res = await fetch(`${API_BASE}/reports/design/${reportType}/detail/${reportId}/custom-column`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      formula,
+      session_id: sessionId,
+      file_name: fileName,
+    }),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: 'Custom column failed' }))
+    throw new Error(err.detail || 'Custom column failed')
+  }
+  return res.json()
+}
+
+export async function fetchFormulaSuggestions(reportType, reportId, fileName = null) {
+  const url = fileName
+    ? `${API_BASE}/reports/design/${reportType}/detail/${reportId}/formula-suggestions?file_name=${encodeURIComponent(fileName)}`
+    : `${API_BASE}/reports/design/${reportType}/detail/${reportId}/formula-suggestions`
+  const res = await fetch(url)
+  if (!res.ok) throw new Error('Failed to fetch formula suggestions')
+  return res.json()
+}

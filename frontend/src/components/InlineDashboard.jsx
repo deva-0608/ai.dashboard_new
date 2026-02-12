@@ -36,6 +36,7 @@ export default function InlineDashboard({ reportType, reportId, fileName = null,
         case 'pie': case 'gauge': case 'funnel': w = 4; h = 5; break
         case 'heatmap': case 'radar': case 'boxplot': w = 6; h = 6; break
         case 'histogram': w = 6; h = 5; break
+        case 'forecast': w = 8; h = 6; break
         default: w = 6; h = 5; break
       }
       if (curX + w > cols) { curX = 0; curY += h }
